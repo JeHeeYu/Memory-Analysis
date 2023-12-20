@@ -5,5 +5,6 @@
         <file>src/qml/Consts/Colors.qml</file>
         <file>src/qml/Consts/Images.qml</file>
         <file>images/bg_white_rectangle.png</file>
+        <file>fonts/PretendardVariable.ttf</file>
     </qresource>
 </RCC>
