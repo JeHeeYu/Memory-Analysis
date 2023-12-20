@@ -1,5 +1,9 @@
 <RCC>
     <qresource prefix="/">
-        <file>src/main.qml</file>
+        <file>src/qml/main.qml</file>
+        <file>src/qml/Components/CircularProgressBar.qml</file>
+        <file>src/qml/Consts/Colors.qml</file>
+        <file>src/qml/Consts/Images.qml</file>
+        <file>images/bg_white_rectangle.png</file>
     </qresource>
 </RCC>

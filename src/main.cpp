@@ -1,6 +1,10 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QApplication>
+#include <QQmlContext>
+
+#include "processmanager.h"
+#include "memorymodel.h"
 
 int main(int argc, char *argv[])
 {
@@ -9,8 +13,13 @@ int main(int argc, char *argv[])
 #endif
     QApplication app(argc, argv);
 
+    MemoryModel memoryModel;
+
+    ProcessManager processManager;
+
     QQmlApplicationEngine engine;
-    const QUrl url(QStringLiteral("qrc:/src/main.qml"));
+    engine.rootContext()->setContextProperty("memoryModel", &memoryModel);
+    const QUrl url(QStringLiteral("qrc:/src/qml/main.qml"));
     QObject::connect(
         &engine,
         &QQmlApplicationEngine::objectCreated,
