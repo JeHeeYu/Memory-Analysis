@@ -47,14 +47,14 @@ void MemoryModel::setProcessMemoryUsage(const double& value)
 
 void MemoryModel::receiveMemoryTotalUsage(double memory)
 {
-    qDebug() << Q_FUNC_INFO << memory;
+    //qDebug() << Q_FUNC_INFO << memory;
 
     setMemoryTotalUsage(memory);
 }
 
 void MemoryModel::receiveProcessMemoryUsage(double memory)
 {
-    qDebug() << Q_FUNC_INFO << memory;
+    //qDebug() << Q_FUNC_INFO << memory;
 
     setProcessMemoryUsage(memory);
 }

@@ -15,6 +15,8 @@ Window {
     Colors { id: colors }
     Images { id: images }
 
+    property int chartStartTime: 0
+
     Image {
         id: image
         x: 30
@@ -53,46 +55,61 @@ Window {
 
     ChartView {
         id: chart
-        title: "Line"
+        title: "Real-time Chart"
         antialiasing: true
-        legend.visible: false
-        width: 400
+        width: 600
         height: 400
-        anchors.top: parent.top
-        anchors.right: parent.right
+        anchors.centerIn: parent
 
         ValuesAxis {
             id: axisX
-            min: 0
-            max: 1000
-            tickCount: 5
+            min: 1
+            max: 10
+            tickCount: 7
+            labelFormat: "%.0f"
         }
 
         ValuesAxis {
             id: axisY
             min: 0
-            max: 1000
-            tickCount: 5
+            max: 100
+            tickCount: 6
+            labelFormat: "%.0f"
         }
 
         LineSeries {
-            id: series1
-            name: "LineSeries"
+            id: chartLine
+            name: "Real-time Data"
             axisX: axisX
             axisY: axisY
         }
 
         ScatterSeries {
-            id: series2
+            id: chartPoint
+            name: "Real-time Data"
             axisX: axisX
             axisY: axisY
+            markerSize: 10
+            markerShape: ScatterSeries.MarkerShapeCircle
         }
+    }
 
-        Component.onCompleted: {
-            for (var i = 0; i <= 10; i++) {
-                series1.append(i, 5000);
-                series2.append(i, 5000);
+    Timer {
+        interval: 1000
+        running: true
+        repeat: true
+
+        onTriggered: {
+            let newValue = Math.random() * 100;
+
+            chartLine.append(chartStartTime, newValue)
+            chartPoint.append(chartStartTime, newValue)
+
+            if (axisX.max < chartStartTime) {
+                axisX.max = chartStartTime
             }
+
+            chartStartTime++
         }
     }
 }

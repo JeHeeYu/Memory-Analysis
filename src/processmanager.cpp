@@ -16,7 +16,7 @@ ProcessManager::ProcessManager(QObject *parent) : QObject(parent)
 
 void ProcessManager::getProcessList()
 {
-    qDebug() << Q_FUNC_INFO;
+    //qDebug() << Q_FUNC_INFO;
 
     HANDLE hProcessSnap;
     PROCESSENTRY32 pe32;
@@ -49,7 +49,7 @@ void ProcessManager::getProcessList()
 
 void ProcessManager::getMemoryTotalUsage()
 {
-    qDebug() << Q_FUNC_INFO;
+    //qDebug() << Q_FUNC_INFO;
     MEMORYSTATUSEX memoryStatus;
     memoryStatus.dwLength = sizeof(memoryStatus);
 
@@ -58,7 +58,7 @@ void ProcessManager::getMemoryTotalUsage()
         double usedMemory = static_cast<double>(totalMemory - memoryStatus.ullAvailPhys);
         double usagePercentage = (usedMemory / totalMemory) * 100.0;
 
-        qDebug() << Q_FUNC_INFO << usagePercentage;
+        //qDebug() << Q_FUNC_INFO << usagePercentage;
 
         emit sendMemoryTotalUsage(usagePercentage);
     }
@@ -122,7 +122,7 @@ void ProcessManager::GetMemoryUsageByProcessName(const wchar_t* processName)
 
 void ProcessManager::updateProcessInfo()
 {
-    qDebug() << Q_FUNC_INFO;
+    //qDebug() << Q_FUNC_INFO;
     //getProcessList();
     const wchar_t* processName = L"qtcreator.exe";
     GetMemoryUsageByProcessName(processName);
