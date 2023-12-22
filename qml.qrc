@@ -2,8 +2,10 @@
     <qresource prefix="/">
         <file>src/qml/main.qml</file>
         <file>src/qml/Components/CircularProgressBar.qml</file>
+        <file>src/qml/Components/PretendardText.qml</file>
         <file>src/qml/Consts/Colors.qml</file>
         <file>src/qml/Consts/Images.qml</file>
+        <file>src/qml/Consts/Fonts.qml</file>
         <file>images/bg_white_rectangle.png</file>
         <file>fonts/PretendardVariable.ttf</file>
     </qresource>

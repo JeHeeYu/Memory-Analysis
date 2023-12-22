@@ -23,17 +23,11 @@ Window {
         height: 150
         source: images.bgWhiteRectangle
 
-        FontLoader {
-            id: cFontLoader
-            source: "../../fonts/PretendardVariable.ttf"
-        }
-
-        Text {
+        PretendardText {
             width: parent.width
             height: parent.height
             text: "Memory"
             font.pointSize: 20
-            font.family: cFontLoader.name
             color: "black"
             horizontalAlignment: Text.AlignHCenter
         }
