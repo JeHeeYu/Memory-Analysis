@@ -26,6 +26,9 @@ signals:
     void sendMemoryTotalUsage(double memory);
     void sendProcessMemoryUsage(double value);
 
+    void sendProcessIdList(QStringList list);
+    void sendProcessNameList(QStringList list);
+
 private slots:
     void updateProcessInfo();
 

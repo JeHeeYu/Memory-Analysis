@@ -10,11 +10,17 @@ MemoryModel::MemoryModel(QObject *parent) : QObject(parent)
 
     memoryTotalUsage = 0.0;
     processMemoryUsage = 0.0;
+    processIdList.clear();
+    processNameList.clear();
 
     QObject::connect(processManager, &ProcessManager::sendMemoryTotalUsage,
             this, &MemoryModel::receiveMemoryTotalUsage);
     QObject::connect(processManager, &ProcessManager::sendProcessMemoryUsage,
                      this, &MemoryModel::receiveProcessMemoryUsage);
+    QObject::connect(processManager, &ProcessManager::sendProcessIdList,
+                     this, &MemoryModel::receiveProcessIdList);
+    QObject::connect(processManager, &ProcessManager::sendProcessNameList,
+                     this, &MemoryModel::receiveProcessNameList);
 }
 
 double MemoryModel::getMemoryTotalUsage() const
@@ -25,6 +31,16 @@ double MemoryModel::getMemoryTotalUsage() const
 double MemoryModel::getProcessMemoryUsage() const
 {
     return processMemoryUsage;
+}
+
+QStringList MemoryModel::getProcessIdList() const
+{
+    return processIdList;
+}
+
+QStringList MemoryModel::getProcessNameList() const
+{
+    return processNameList;
 }
 
 void MemoryModel::setMemoryTotalUsage(const double& memory)
@@ -45,16 +61,44 @@ void MemoryModel::setProcessMemoryUsage(const double& value)
     }
 }
 
-void MemoryModel::receiveMemoryTotalUsage(double memory)
+void MemoryModel::setProcessIdList(const QStringList& list)
+{
+    if(processIdList != list) {
+        processIdList = list;
+
+        emit processIdListChanged();
+    }
+}
+
+void MemoryModel::setProcessNameList(const QStringList& list)
+{
+    if(processNameList != list) {
+        processNameList = list;
+
+        emit processNameListChanged();
+    }
+}
+
+void MemoryModel::receiveMemoryTotalUsage(const double& memory)
 {
     //qDebug() << Q_FUNC_INFO << memory;
 
     setMemoryTotalUsage(memory);
 }
 
-void MemoryModel::receiveProcessMemoryUsage(double memory)
+void MemoryModel::receiveProcessMemoryUsage(const double& memory)
 {
     //qDebug() << Q_FUNC_INFO << memory;
 
     setProcessMemoryUsage(memory);
+}
+
+void MemoryModel::receiveProcessIdList(const QStringList& list)
+{
+    setProcessIdList(list);
+}
+
+void MemoryModel::receiveProcessNameList(const QStringList& list)
+{
+    setProcessNameList(list);
 }

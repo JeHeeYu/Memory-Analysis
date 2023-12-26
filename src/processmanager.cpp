@@ -4,8 +4,9 @@
 
 ProcessManager::ProcessManager(QObject *parent) : QObject(parent)
 {
-    getProcessList();
+
     getMemoryTotalUsage();
+    getProcessList();
     const wchar_t* processName = L"qtcreator.exe";
     GetMemoryUsageByProcessName(processName);
 
@@ -16,10 +17,11 @@ ProcessManager::ProcessManager(QObject *parent) : QObject(parent)
 
 void ProcessManager::getProcessList()
 {
-    //qDebug() << Q_FUNC_INFO;
-
     HANDLE hProcessSnap;
     PROCESSENTRY32 pe32;
+
+    QStringList processIdList;
+    QStringList processNameList;
 
     hProcessSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
     if (hProcessSnap == INVALID_HANDLE_VALUE)
@@ -41,8 +43,14 @@ void ProcessManager::getProcessList()
 
     do
     {
-        qDebug() << pe32.th32ProcessID << "\t" << QString::fromWCharArray(pe32.szExeFile);
+        processIdList << QString::number(pe32.th32ProcessID);
+        processNameList << QString::fromWCharArray(pe32.szExeFile);
+
+        //qDebug() << processIdList << "\t" << processNameList;
     } while (Process32Next(hProcessSnap, &pe32));
+
+    emit sendProcessIdList(processIdList);
+    emit sendProcessNameList(processNameList);
 
     CloseHandle(hProcessSnap);
 }
@@ -123,7 +131,7 @@ void ProcessManager::GetMemoryUsageByProcessName(const wchar_t* processName)
 void ProcessManager::updateProcessInfo()
 {
     //qDebug() << Q_FUNC_INFO;
-    //getProcessList();
+    getProcessList();
     const wchar_t* processName = L"qtcreator.exe";
     GetMemoryUsageByProcessName(processName);
     getMemoryTotalUsage();
