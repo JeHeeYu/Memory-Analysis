@@ -7,6 +7,7 @@
         <file>src/qml/Consts/Images.qml</file>
         <file>src/qml/Consts/Fonts.qml</file>
         <file>images/bg_white_rectangle.png</file>
+        <file>images/search_bar.png</file>
         <file>fonts/PretendardVariable.ttf</file>
     </qresource>
 </RCC>

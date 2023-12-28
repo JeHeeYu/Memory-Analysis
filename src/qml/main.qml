@@ -24,7 +24,7 @@ Window {
 
     onProcessNameListChanged: {
         for(let i = 0; i < processIdList.length; i++) {
-            processListModel.append({pid: processIdList[i], process: processNameList[i]})
+            processListModel.append({no: i+1, pid: processIdList[i], process: processNameList[i]})
         }
     }
 
@@ -68,9 +68,12 @@ Window {
             id: chart
             title: "Real-time Chart"
             antialiasing: true
-            width: 600
+            width: 950
             height: 400
-            anchors.centerIn: parent
+            anchors.bottom: parent.bottom
+            anchors.right: parent.right
+            anchors.bottomMargin: 25
+            anchors.rightMargin: 30
 
             ValuesAxis {
                 id: axisX
@@ -132,7 +135,7 @@ Window {
                     text: "Test"
 
                     onClicked: {
-                        add()
+                        addChartSeries()
                     }
                 }
 
@@ -170,6 +173,25 @@ Window {
         }
     }
 
+    Image {
+        id: searchImage
+        width: 200
+        height: 45
+        source: images.searchBar
+        anchors.bottom: processListView.top
+        anchors.left: parent.left
+        anchors.bottomMargin: 0
+        anchors.leftMargin: 20
+
+        TextEdit {
+            anchors.fill: parent
+
+            onTextChanged: {
+                searchProcessName(text)
+            }
+        }
+    }
+
     ListView {
         id: processListView
         model: processListModel
@@ -180,17 +202,18 @@ Window {
         headerPositioning: ListView.OverlayHeader
         anchors.bottom: parent.bottom
         anchors.left: parent.left
-        anchors.bottomMargin: 20
-        anchors.leftMargin: 20
+        anchors.bottomMargin: 30
+        anchors.leftMargin: 30
         clip: true
+
+        ScrollBar.vertical: ScrollBar {
+            width: 20
+            policy: ScrollBar.AlwaysOn
+        }
     }
 
     ListModel {
         id: processListModel
-
-        Component.onCompleted: {
-            processListModel.append({pid: "PID", process: "Process"})
-        }
     }
 
     Component {
@@ -203,24 +226,39 @@ Window {
             Rectangle {
                 width: parent.width
                 height: parent.height
-                color: "grey"
+                color: colors.mainColor
                 border.width: 1
 
                 Row {
                     width: parent.width
                     height: parent.height
-                    Text {
-                        width: 200
+
+                    PretendardText {
+                        width: 100
                         height: parent.height
-                        text: "pid"
+                        text: "No"
+                        font.pixelSize: 16
+                        color: "white"
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
                     }
 
-                    Text {
+                    PretendardText {
+                        width: 100
+                        height: parent.height
+                        text: "PID"
+                        font.pixelSize: 16
+                        color: "white"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                    }
+
+                    PretendardText {
                         width: 200
                         height: parent.height
-                        text: "process"
+                        text: "프로세스 이름"
+                        font.pixelSize: 16
+                        color: "white"
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
                     }
@@ -246,16 +284,24 @@ Window {
                 Row {
                     width: parent.width
                     height: parent.height
-                    Text {
-                        width: 200
+
+                    PretendardText {
+                        width: 100
+                        height: parent.height
+                        text: no
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                    }
+
+                    PretendardText {
+                        width: 100
                         height: parent.height
                         text: pid
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
-
                     }
 
-                    Text {
+                    PretendardText {
                         width: 200
                         height: parent.height
                         text: process
@@ -267,9 +313,26 @@ Window {
         }
     }
 
-    function add() {
+    function addChartSeries() {
         let line = chart.createSeries(ChartView.SeriesTypeLine, "Line series", axisX, axisY);
 
         charts.push(line)
+    }
+
+    function searchProcessName(keyword) {
+        processListModel.clear()
+        let number = 0
+
+        if (keyword === "") {
+            for (let i = 0; i < processNameList.length; i++) {
+                processListModel.append({no: i+1, pid: processIdList[i], process: processNameList[i]})
+            }
+        } else {
+            for (let j = 0; j < processNameList.length; j++) {
+                if (processNameList[j].toLowerCase().indexOf(keyword.toLowerCase()) !== -1) {
+                    processListModel.append({no: number++, pid: processIdList[j], process: processNameList[j]})
+                }
+            }
+        }
     }
 }
