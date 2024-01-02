@@ -7,8 +7,6 @@ ProcessManager::ProcessManager(QObject *parent) : QObject(parent)
 
     getMemoryTotalUsage();
     getProcessList();
-    const wchar_t* processName = L"qtcreator.exe";
-    GetMemoryUsageByProcessName(processName);
 
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &ProcessManager::updateProcessInfo);
@@ -38,8 +36,6 @@ void ProcessManager::getProcessList()
         CloseHandle(hProcessSnap);
         return;
     }
-
-    qDebug() << "PID\tProcess Name";
 
     do
     {
@@ -100,7 +96,7 @@ DWORD ProcessManager::GetProcessIdByName(const wchar_t* processName)
 
 void ProcessManager::GetMemoryUsageByProcessName(const wchar_t* processName)
 {
-    //qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO << processName;
 
     DWORD processId = GetProcessIdByName(processName);
     if (processId == 0) {
@@ -130,9 +126,6 @@ void ProcessManager::GetMemoryUsageByProcessName(const wchar_t* processName)
 
 void ProcessManager::updateProcessInfo()
 {
-    //qDebug() << Q_FUNC_INFO;
     getProcessList();
-    const wchar_t* processName = L"qtcreator.exe";
-    GetMemoryUsageByProcessName(processName);
     getMemoryTotalUsage();
 }

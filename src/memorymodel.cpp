@@ -13,14 +13,34 @@ MemoryModel::MemoryModel(QObject *parent) : QObject(parent)
     processIdList.clear();
     processNameList.clear();
 
+    connectInit();
+}
+
+void MemoryModel::connectInit()
+{
     QObject::connect(processManager, &ProcessManager::sendMemoryTotalUsage,
-            this, &MemoryModel::receiveMemoryTotalUsage);
+                     this, &MemoryModel::receiveMemoryTotalUsage);
     QObject::connect(processManager, &ProcessManager::sendProcessMemoryUsage,
                      this, &MemoryModel::receiveProcessMemoryUsage);
     QObject::connect(processManager, &ProcessManager::sendProcessIdList,
                      this, &MemoryModel::receiveProcessIdList);
     QObject::connect(processManager, &ProcessManager::sendProcessNameList,
                      this, &MemoryModel::receiveProcessNameList);
+}
+
+void MemoryModel::addProcess(QString processName)
+{
+    QTimer *processTimer = new QTimer(this);
+
+    connect(processTimer, &QTimer::timeout, this, [=]() {
+        std::wstring str = processName.toStdWString();
+        const wchar_t* wstr = str.c_str();
+        processManager->GetMemoryUsageByProcessName(wstr);
+    });
+
+    processTimer->start(1000);
+
+    processTimers.append(processTimer);
 }
 
 double MemoryModel::getMemoryTotalUsage() const

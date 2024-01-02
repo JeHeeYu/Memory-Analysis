@@ -86,41 +86,9 @@ Window {
             ValuesAxis {
                 id: axisY
                 min: 0
-                max: 100
+                max: 1000
                 tickCount: 6
                 labelFormat: "%.0f"
-            }
-
-            // 첫 번째 선
-            LineSeries {
-                id: chartLine1
-                name: "Real-time Data 123"
-                axisX: axisX
-                axisY: axisY
-            }
-
-            // 두 번째 선
-            LineSeries {
-                id: chartLine2
-                name: "Real-time Data 456"
-                axisX: axisX
-                axisY: axisY
-            }
-
-            LineSeries {
-                id: chartLine3
-                name: "Real-time Data 789"
-                axisX: axisX
-                axisY: axisY
-            }
-
-            ScatterSeries {
-                id: chartPoint
-                name: "Real-time Data 456"
-                axisX: axisX
-                axisY: axisY
-                markerSize: 10
-                markerShape: ScatterSeries.MarkerShapeCircle
             }
 
             Row {
@@ -165,8 +133,8 @@ Window {
                 axisX.max = chartStartTime
             }
 
-            for(var i = 0; i < charts.length; i++) {
-                charts[i].append(chartStartTime, Math.random() * 100)
+            for(let i = 0; i < charts.length; i++) {
+                charts[i].append(chartStartTime, memoryModel.processMemoryUsage)
             }
 
             chartStartTime++
@@ -309,12 +277,26 @@ Window {
                         verticalAlignment: Text.AlignVCenter
                     }
                 }
+
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+
+                    onClicked: {
+
+                    }
+
+                    onDoubleClicked: {
+                        memoryModel.addProcess(process.toString())
+                        addChartSeries(process.toString())
+                    }
+                }
             }
         }
     }
 
-    function addChartSeries() {
-        let line = chart.createSeries(ChartView.SeriesTypeLine, "Line series", axisX, axisY);
+    function addChartSeries(processName) {
+        let line = chart.createSeries(ChartView.SeriesTypeLine, processName, axisX, axisY);
 
         charts.push(line)
     }

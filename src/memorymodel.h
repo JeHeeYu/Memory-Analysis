@@ -18,12 +18,15 @@ class MemoryModel : public QObject
 public:
     explicit MemoryModel(QObject *parent = nullptr);
 
+    Q_INVOKABLE void addProcess(QString processName);
+
     double getMemoryTotalUsage() const;
     double getProcessMemoryUsage() const;
     QStringList getProcessIdList() const;
     QStringList getProcessNameList() const;
 
 private:
+    void connectInit();
     void setMemoryTotalUsage(const double& memory);
     void setProcessMemoryUsage(const double& value);
     void setProcessIdList(const QStringList& list);
@@ -48,6 +51,8 @@ private:
     double processMemoryUsage;
     QStringList processIdList;
     QStringList processNameList;
+
+    QList<QTimer*> processTimers;
 };
 
 #endif // MEMORYMODEL_H
