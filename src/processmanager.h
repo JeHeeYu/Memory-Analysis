@@ -16,18 +16,11 @@ class ProcessManager : public QObject
 
 public:
     explicit ProcessManager(QObject *parent = nullptr);
-    void getProcessList();
-    void getMemoryTotalUsage();
+    QVector<QPair<QString, QString>> getProcessList();
+    double getMemoryTotalUsage();
 
     DWORD GetProcessIdByName(const wchar_t* processName);
-    void GetMemoryUsageByProcessName(const wchar_t* processName);
-
-signals:
-    void sendMemoryTotalUsage(double memory);
-    void sendProcessMemoryUsage(double value);
-
-    void sendProcessIdList(QStringList list);
-    void sendProcessNameList(QStringList list);
+    double GetMemoryUsageByProcessName(const wchar_t* processName);
 
 private slots:
     void updateProcessInfo();

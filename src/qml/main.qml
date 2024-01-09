@@ -19,13 +19,19 @@ Window {
 
     property int chartStartTime: 0
     property var charts: []
-    property var processIdList: memoryModel.processIdList
-    property var processNameList: memoryModel.processNameList
+    property var usageProcessList: []
+    property var processList: memoryModel.processList
+    property double memoryTotalUsage: memoryModel.memoryTotalUsage
+    property int timerCount: 0
 
-    onProcessNameListChanged: {
-        for(let i = 0; i < processIdList.length; i++) {
-            processListModel.append({no: i+1, pid: processIdList[i], process: processNameList[i]})
+    onProcessListChanged: {
+        for(let i = 0; i < processList.length; i++) {
+            processListModel.append({no: i+1, pid: processList[i].processId, process: processList[i].processName})
         }
+    }
+
+    Component.onCompleted: {
+        timer.stop()
     }
 
     Image {
@@ -48,10 +54,10 @@ Window {
         CircularProgressBar {
             id: progress2
             lineWidth: 10
-            value: memoryModel.memoryTotalUsage / 100.0
+            value: memoryTotalUsage / 100.0
             size: 100
             secondaryColor: "#e0e0e0"
-            primaryColor: "#ab47bc"
+            primaryColor: colors.mainColor
             y: parent.height / 2 - height / 2 + 20
             anchors.horizontalCenter: parent.horizontalCenter
 
@@ -78,7 +84,7 @@ Window {
             ValuesAxis {
                 id: axisX
                 min: 1
-                max: 10
+                max: 7
                 tickCount: 7
                 labelFormat: "%.0f"
             }
@@ -86,7 +92,7 @@ Window {
             ValuesAxis {
                 id: axisY
                 min: 0
-                max: 1000
+                max: 100
                 tickCount: 6
                 labelFormat: "%.0f"
             }
@@ -124,6 +130,7 @@ Window {
         }
 
     Timer {
+        id: timer
         interval: 1000
         running: true
         repeat: true
@@ -133,13 +140,20 @@ Window {
                 axisX.max = chartStartTime
             }
 
-            for(let i = 0; i < charts.length; i++) {
-                charts[i].append(chartStartTime, memoryModel.processMemoryUsage)
-            }
-
             chartStartTime++
+
+            for(let i = 0; i < charts.length; i++) {
+                let usage = memoryModel.getProcessDataList(usageProcessList[i])
+
+                if(axisY.max < usage[usage.length - 1]) {
+                    axisY.max = usage[usage.length - 1] + 50
+                }
+
+                charts[i].append(chartStartTime, usage[usage.length - 1])
+            }
         }
     }
+
 
     Image {
         id: searchImage
@@ -289,6 +303,8 @@ Window {
                     onDoubleClicked: {
                         memoryModel.addProcess(process.toString())
                         addChartSeries(process.toString())
+                        usageProcessList.push(process.toString())
+                        timer.start()
                     }
                 }
             }
@@ -306,13 +322,13 @@ Window {
         let number = 0
 
         if (keyword === "") {
-            for (let i = 0; i < processNameList.length; i++) {
-                processListModel.append({no: i+1, pid: processIdList[i], process: processNameList[i]})
+            for (let i = 0; i < processList.length; i++) {
+                processListModel.append({no: i+1, pid: processList[i].processId, process: processList[i].processName})
             }
         } else {
-            for (let j = 0; j < processNameList.length; j++) {
-                if (processNameList[j].toLowerCase().indexOf(keyword.toLowerCase()) !== -1) {
-                    processListModel.append({no: number++, pid: processIdList[j], process: processNameList[j]})
+            for (let j = 0; j < processList.length; j++) {
+                if (processList[j].processName.toLowerCase().indexOf(keyword.toLowerCase()) !== -1) {
+                    processListModel.append({no: number++, pid: processList[j].processId, process: processList[j].processName})
                 }
             }
         }

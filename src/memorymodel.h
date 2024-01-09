@@ -2,9 +2,28 @@
 #define MEMORYMODEL_H
 
 #include <QObject>
-#include <QDebug>
+#include <QList>
+#include <QTimer>
 
 #include "processmanager.h"
+
+typedef struct _ProcessInfo
+{
+    Q_GADGET
+
+public:
+    QList<QString> processIdList;
+    QList<QString> processNameList;
+    QString processId;
+    QString processName;
+    QList<QString> checkProcess;
+    QList<double> memoryUsage;
+
+    Q_PROPERTY(QString processId MEMBER processId)
+    Q_PROPERTY(QString processName MEMBER processName)
+    Q_PROPERTY(QList<QString> checkProcess MEMBER checkProcess)
+    Q_PROPERTY(QList<double> memoryUsage MEMBER memoryUsage)
+} ProcessInfo;
 
 class MemoryModel : public QObject
 {
@@ -12,47 +31,40 @@ class MemoryModel : public QObject
 
     Q_PROPERTY(double memoryTotalUsage READ getMemoryTotalUsage WRITE setMemoryTotalUsage NOTIFY memoryTotalUsageChanged)
     Q_PROPERTY(double processMemoryUsage READ getProcessMemoryUsage WRITE setProcessMemoryUsage NOTIFY processMemoryUsageChanged)
-    Q_PROPERTY(QStringList processIdList READ getProcessIdList WRITE setProcessIdList NOTIFY processIdListChanged)
-    Q_PROPERTY(QStringList processNameList READ getProcessNameList WRITE setProcessNameList NOTIFY processNameListChanged)
+    Q_PROPERTY(QVector<ProcessInfo> processList READ getProcessList WRITE setProcessList NOTIFY processListChanged)
 
 public:
     explicit MemoryModel(QObject *parent = nullptr);
+    ~MemoryModel();
 
     Q_INVOKABLE void addProcess(QString processName);
+    Q_INVOKABLE QList<double> getProcessDataList(QString processName);
 
     double getMemoryTotalUsage() const;
     double getProcessMemoryUsage() const;
-    QStringList getProcessIdList() const;
-    QStringList getProcessNameList() const;
+    QVector<ProcessInfo> getProcessList() const;
+
+    void setMemoryTotalUsage(const double& memory);
+    void setProcessMemoryUsage(const double& value);
+    void setProcessList(const QVector<ProcessInfo>& list);
 
 private:
     void connectInit();
-    void setMemoryTotalUsage(const double& memory);
-    void setProcessMemoryUsage(const double& value);
-    void setProcessIdList(const QStringList& list);
-    void setProcessNameList(const QStringList& list);
+    void timerTimeout();
+    void getProcessData();
 
 signals:
     void memoryTotalUsageChanged();
     void processMemoryUsageChanged();
-    void processIdListChanged();
-    void processNameListChanged();
-
-public slots:
-    void receiveMemoryTotalUsage(const double& memory);
-    void receiveProcessMemoryUsage(const double& memory);
-    void receiveProcessIdList(const QStringList& list);
-    void receiveProcessNameList(const QStringList& list);
+    void processListChanged();
 
 private:
     ProcessManager *processManager;
-
     double memoryTotalUsage;
     double processMemoryUsage;
-    QStringList processIdList;
-    QStringList processNameList;
-
-    QList<QTimer*> processTimers;
+    QVector<ProcessInfo> processList;
+    QTimer *processTimer;
+    QMap<QString, QList<double>> memoryMap;
 };
 
 #endif // MEMORYMODEL_H

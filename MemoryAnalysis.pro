@@ -7,7 +7,7 @@ QT += qml quick core widgets
 SOURCES += \
         src/main.cpp \
         src/memorymodel.cpp \
-        src/processmanager.cpp
+        src/processmanager.cpp \
 
 RESOURCES += qml.qrc
 
@@ -26,4 +26,4 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     src/memorymodel.h \
-    src/processmanager.h
+    src/processmanager.h \

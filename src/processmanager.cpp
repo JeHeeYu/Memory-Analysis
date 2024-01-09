@@ -13,19 +13,19 @@ ProcessManager::ProcessManager(QObject *parent) : QObject(parent)
     timer->start(1000);
 }
 
-void ProcessManager::getProcessList()
+QVector<QPair<QString, QString>> ProcessManager::getProcessList()
 {
     HANDLE hProcessSnap;
     PROCESSENTRY32 pe32;
 
-    QStringList processIdList;
-    QStringList processNameList;
+    QVector<QPair<QString, QString>> processList;
 
     hProcessSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
     if (hProcessSnap == INVALID_HANDLE_VALUE)
     {
         qDebug() << "Error creating process snapshot";
-        return;
+
+        return QVector<QPair<QString, QString>>();
     }
 
     pe32.dwSize = sizeof(PROCESSENTRY32);
@@ -34,26 +34,26 @@ void ProcessManager::getProcessList()
     {
         qDebug() << "Error getting process information";
         CloseHandle(hProcessSnap);
-        return;
+
+        return QVector<QPair<QString, QString>>();
     }
 
     do
     {
-        processIdList << QString::number(pe32.th32ProcessID);
-        processNameList << QString::fromWCharArray(pe32.szExeFile);
+        QString processID = QString::number(pe32.th32ProcessID);
+        QString processName = QString::fromWCharArray(pe32.szExeFile);
 
-        //qDebug() << processIdList << "\t" << processNameList;
+        processList.push_back(QPair<QString, QString>(processID, processName));
+
     } while (Process32Next(hProcessSnap, &pe32));
 
-    emit sendProcessIdList(processIdList);
-    emit sendProcessNameList(processNameList);
-
     CloseHandle(hProcessSnap);
+
+    return processList;
 }
 
-void ProcessManager::getMemoryTotalUsage()
+double ProcessManager::getMemoryTotalUsage()
 {
-    //qDebug() << Q_FUNC_INFO;
     MEMORYSTATUSEX memoryStatus;
     memoryStatus.dwLength = sizeof(memoryStatus);
 
@@ -62,16 +62,12 @@ void ProcessManager::getMemoryTotalUsage()
         double usedMemory = static_cast<double>(totalMemory - memoryStatus.ullAvailPhys);
         double usagePercentage = (usedMemory / totalMemory) * 100.0;
 
-        //qDebug() << Q_FUNC_INFO << usagePercentage;
-
-        emit sendMemoryTotalUsage(usagePercentage);
+        return usagePercentage;
     }
 }
 
 DWORD ProcessManager::GetProcessIdByName(const wchar_t* processName)
 {
-    //qDebug() << Q_FUNC_INFO;
-
     PROCESSENTRY32 pe32;
     pe32.dwSize = sizeof(PROCESSENTRY32);
 
@@ -94,34 +90,32 @@ DWORD ProcessManager::GetProcessIdByName(const wchar_t* processName)
     return 0;
 }
 
-void ProcessManager::GetMemoryUsageByProcessName(const wchar_t* processName)
+double ProcessManager::GetMemoryUsageByProcessName(const wchar_t* processName)
 {
     qDebug() << Q_FUNC_INFO << processName;
 
+    double memoryUsageMB = 0.0;
     DWORD processId = GetProcessIdByName(processName);
     if (processId == 0) {
         qDebug() << "Process not found";
-        return;
+        return 0.0;
     }
 
     HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processId);
     if (hProcess == nullptr) {
         qDebug() << "Error opening process";
-        return;
+        return 0.0;
     }
 
     PROCESS_MEMORY_COUNTERS_EX pmc;
     if (GetProcessMemoryInfo(hProcess, (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc))) {
-        // Memory usage in MB
-        double memoryUsageMB = static_cast<double>(pmc.WorkingSetSize) / (1024 * 1024);
+        memoryUsageMB = static_cast<double>(pmc.WorkingSetSize) / (1024 * 1024);
         CloseHandle(hProcess);
-        sendProcessMemoryUsage(memoryUsageMB);
-
-        qDebug() << memoryUsageMB;
     }
 
     CloseHandle(hProcess);
-    return;
+
+    return memoryUsageMB;
 }
 
 void ProcessManager::updateProcessInfo()
