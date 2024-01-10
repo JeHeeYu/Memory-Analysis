@@ -17,6 +17,9 @@ Window {
     Colors { id: colors }
     Images { id: images }
 
+    readonly property int defaultaxisXMax: 7
+    readonly property int defaultaxisYMax: 100
+
     readonly property int playingStatus: 0
     readonly property int pausingStatus: 1
     readonly property int stoppingStatus: 2
@@ -29,7 +32,6 @@ Window {
     property var processList: memoryModel.processList
     property double memoryTotalUsage: memoryModel.memoryTotalUsage
     property double cpuTotalUsage: memoryModel.cpuTotalUsage
-    property int timerCount: 0
 
     onProcessListChanged: {
         for(let i = 0; i < processList.length; i++) {
@@ -213,7 +215,11 @@ Window {
                             removeChartSeries()
                             chartTimer.stop()
                             memoryModel.allRemoveProcess()
-                            timerCount = 0
+                            usageProcessList = []
+                            chartStartTime = 0
+
+                            axisX.max = defaultaxisXMax
+                            axisY.max = defaultaxisYMax
                         }
                     }
                 }
@@ -419,6 +425,7 @@ Window {
 
     function removeChartSeries() {
         chart.removeAllSeries()
+        charts = [];
     }
 
     function searchProcessName(keyword) {

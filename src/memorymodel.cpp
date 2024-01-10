@@ -63,6 +63,7 @@ void MemoryModel::addProcess(QString processName)
 
 void MemoryModel::allRemoveProcess()
 {
+    memoryMap.clear();
     checkProcess.clear();
 }
 
@@ -77,6 +78,7 @@ QList<double> MemoryModel::getProcessDataList(QString processName)
 
     for(int i = 0; i < memoryMap[processName].length(); i++) {
         list.append(memoryMap[processName].value(i));
+        qDebug() << "Jehee Test : " << processName << "  " << memoryMap[processName].length() << "   " << memoryMap[processName].value(i);
     }
 
     return list;
