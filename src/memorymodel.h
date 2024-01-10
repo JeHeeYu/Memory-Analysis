@@ -30,6 +30,7 @@ class MemoryModel : public QObject
     Q_OBJECT
 
     Q_PROPERTY(double memoryTotalUsage READ getMemoryTotalUsage WRITE setMemoryTotalUsage NOTIFY memoryTotalUsageChanged)
+    Q_PROPERTY(double cpuTotalUsage READ getCPUTotalUsage WRITE setCPUTotalUsage NOTIFY cpuTotalUsageChanged)
     Q_PROPERTY(double processMemoryUsage READ getProcessMemoryUsage WRITE setProcessMemoryUsage NOTIFY processMemoryUsageChanged)
     Q_PROPERTY(QVector<ProcessInfo> processList READ getProcessList WRITE setProcessList NOTIFY processListChanged)
 
@@ -41,10 +42,12 @@ public:
     Q_INVOKABLE QList<double> getProcessDataList(QString processName);
 
     double getMemoryTotalUsage() const;
+    double getCPUTotalUsage() const;
     double getProcessMemoryUsage() const;
     QVector<ProcessInfo> getProcessList() const;
 
     void setMemoryTotalUsage(const double& memory);
+    void setCPUTotalUsage(const double& cpu);
     void setProcessMemoryUsage(const double& value);
     void setProcessList(const QVector<ProcessInfo>& list);
 
@@ -55,12 +58,14 @@ private:
 
 signals:
     void memoryTotalUsageChanged();
+    void cpuTotalUsageChanged();
     void processMemoryUsageChanged();
     void processListChanged();
 
 private:
     ProcessManager *processManager;
     double memoryTotalUsage;
+    double cpuTotalUsage;
     double processMemoryUsage;
     QVector<ProcessInfo> processList;
     QTimer *processTimer;

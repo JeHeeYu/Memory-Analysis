@@ -4,7 +4,7 @@
 
 ProcessManager::ProcessManager(QObject *parent) : QObject(parent)
 {
-
+    pdhInit();
     getMemoryTotalUsage();
     getProcessList();
 
@@ -64,9 +64,11 @@ double ProcessManager::getMemoryTotalUsage()
 
         return usagePercentage;
     }
+
+    return 0.0;
 }
 
-DWORD ProcessManager::GetProcessIdByName(const wchar_t* processName)
+DWORD ProcessManager::getProcessIdByName(const wchar_t* processName)
 {
     PROCESSENTRY32 pe32;
     pe32.dwSize = sizeof(PROCESSENTRY32);
@@ -90,12 +92,12 @@ DWORD ProcessManager::GetProcessIdByName(const wchar_t* processName)
     return 0;
 }
 
-double ProcessManager::GetMemoryUsageByProcessName(const wchar_t* processName)
+double ProcessManager::getMemoryUsageByProcessName(const wchar_t* processName)
 {
     qDebug() << Q_FUNC_INFO << processName;
 
     double memoryUsageMB = 0.0;
-    DWORD processId = GetProcessIdByName(processName);
+    DWORD processId = getProcessIdByName(processName);
     if (processId == 0) {
         qDebug() << "Process not found";
         return 0.0;
@@ -122,4 +124,23 @@ void ProcessManager::updateProcessInfo()
 {
     getProcessList();
     getMemoryTotalUsage();
+    getCPUTotalUsage();
+}
+
+void ProcessManager::pdhInit()
+{
+    PdhOpenQuery(NULL, NULL, &cpuQuery);
+    PdhAddCounter(cpuQuery, L"\\Processor(_Total)\\% Processor Time", NULL, &cpuTotal);
+    PdhCollectQueryData(cpuQuery);
+}
+
+
+double ProcessManager::getCPUTotalUsage()
+{
+    PDH_FMT_COUNTERVALUE counterVal;
+
+    PdhCollectQueryData(cpuQuery);
+    PdhGetFormattedCounterValue(cpuTotal, PDH_FMT_DOUBLE, NULL, &counterVal);
+
+    return counterVal.doubleValue;
 }

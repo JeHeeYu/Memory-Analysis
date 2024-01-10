@@ -5,6 +5,7 @@
 #include <tlhelp32.h>
 #include <tchar.h>
 #include <Psapi.h>
+#include "pdh.h"
 
 #include <QObject>
 #include <QDebug>
@@ -19,14 +20,20 @@ public:
     QVector<QPair<QString, QString>> getProcessList();
     double getMemoryTotalUsage();
 
-    DWORD GetProcessIdByName(const wchar_t* processName);
-    double GetMemoryUsageByProcessName(const wchar_t* processName);
+    DWORD getProcessIdByName(const wchar_t* processName);
+    double getMemoryUsageByProcessName(const wchar_t* processName);
+    double getCPUTotalUsage();
+
+private:
+    void pdhInit();
 
 private slots:
     void updateProcessInfo();
 
 private:
     QTimer *timer;
+    PDH_HQUERY cpuQuery;
+    PDH_HCOUNTER cpuTotal;
 };
 
 #endif // PROCESSMANAGER_H

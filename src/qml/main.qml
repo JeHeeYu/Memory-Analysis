@@ -22,6 +22,7 @@ Window {
     property var usageProcessList: []
     property var processList: memoryModel.processList
     property double memoryTotalUsage: memoryModel.memoryTotalUsage
+    property double cpuTotalUsage: memoryModel.cpuTotalUsage
     property int timerCount: 0
 
     onProcessListChanged: {
@@ -66,6 +67,42 @@ Window {
                 anchors.centerIn: parent
                 font.pointSize: 20
                 color: progress2.primaryColor
+            }
+        }
+    }
+
+    Image {
+        id: image2
+        x: 130
+        y: 130
+        width: 150
+        height: 150
+        source: images.bgWhiteRectangle
+
+        PretendardText {
+            width: parent.width
+            height: parent.height
+            text: "Memory"
+            font.pointSize: 20
+            color: "black"
+            horizontalAlignment: Text.AlignHCenter
+        }
+
+        CircularProgressBar {
+            id: progress3
+            lineWidth: 10
+            value: cpuTotalUsage / 100.0
+            size: 100
+            secondaryColor: "#e0e0e0"
+            primaryColor: colors.mainColor
+            y: parent.height / 2 - height / 2 + 20
+            anchors.horizontalCenter: parent.horizontalCenter
+
+            Text {
+                text: parseInt(progress3.value * 100) + "%"
+                anchors.centerIn: parent
+                font.pointSize: 20
+                color: progress3.primaryColor
             }
         }
     }

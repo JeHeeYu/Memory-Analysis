@@ -26,9 +26,10 @@ void MemoryModel::connectInit()
 void MemoryModel::timerTimeout()
 {
     setMemoryTotalUsage(processManager->getMemoryTotalUsage());
+    setCPUTotalUsage(processManager->getCPUTotalUsage());
 
     for (int i = 0; i < processList.last().checkProcess.length(); i++) {
-        memoryMap[processList.last().checkProcess[i]].append(processManager->GetMemoryUsageByProcessName(processList.last().checkProcess[i].toStdWString().c_str()));
+        memoryMap[processList.last().checkProcess[i]].append(processManager->getMemoryUsageByProcessName(processList.last().checkProcess[i].toStdWString().c_str()));
     }
 }
 
@@ -77,6 +78,11 @@ double MemoryModel::getMemoryTotalUsage() const
     return memoryTotalUsage;
 }
 
+double MemoryModel::getCPUTotalUsage() const
+{
+    return cpuTotalUsage;
+}
+
 double MemoryModel::getProcessMemoryUsage() const
 {
     return processMemoryUsage;
@@ -93,6 +99,15 @@ void MemoryModel::setMemoryTotalUsage(const double& memory)
         memoryTotalUsage = memory;
 
         emit memoryTotalUsageChanged();
+    }
+}
+
+void MemoryModel::setCPUTotalUsage(const double& cpu)
+{
+    if (cpuTotalUsage != cpu) {
+        cpuTotalUsage = cpu;
+
+        emit cpuTotalUsageChanged();
     }
 }
 
