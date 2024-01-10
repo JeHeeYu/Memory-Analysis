@@ -143,6 +143,32 @@ Window {
             Row {
                 anchors.top: parent.top
                 anchors.right: parent.right
+                anchors.topMargin: 20
+                anchors.rightMargin: 20
+                spacing: 5
+
+                Image {
+                    width: 20
+                    height: 20
+                    source: (chartStatus === playingStatus) ? images.playingIndicator : images.disableIndicator
+                }
+
+                Image {
+                    width: 20
+                    height: 20
+                    source: (chartStatus === pausingStatus) ? images.pausingIndicator : images.disableIndicator
+                }
+
+                Image {
+                    width: 20
+                    height: 20
+                    source: (chartStatus === stoppingStatus) ? images.stoppingIndicator : images.disableIndicator
+                }
+            }
+
+            Row {
+                anchors.top: parent.top
+                anchors.right: parent.right
                 anchors.topMargin: 70
                 anchors.rightMargin: 40
                 spacing: 5

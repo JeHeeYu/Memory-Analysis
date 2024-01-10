@@ -18,6 +18,7 @@
         <file>images/stopping_enable.png</file>
         <file>images/stopping_disable.png</file>
         <file>images/stopping_indicator.png</file>
+        <file>images/disable_indicator.png</file>
         <file>fonts/PretendardVariable.ttf</file>
     </qresource>
 </RCC>
