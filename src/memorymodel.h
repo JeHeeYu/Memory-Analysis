@@ -12,17 +12,11 @@ typedef struct _ProcessInfo
     Q_GADGET
 
 public:
-    QList<QString> processIdList;
-    QList<QString> processNameList;
     QString processId;
     QString processName;
-    QList<QString> checkProcess;
-    QList<double> memoryUsage;
 
     Q_PROPERTY(QString processId MEMBER processId)
     Q_PROPERTY(QString processName MEMBER processName)
-    Q_PROPERTY(QList<QString> checkProcess MEMBER checkProcess)
-    Q_PROPERTY(QList<double> memoryUsage MEMBER memoryUsage)
 } ProcessInfo;
 
 class MemoryModel : public QObject
@@ -39,6 +33,8 @@ public:
     ~MemoryModel();
 
     Q_INVOKABLE void addProcess(QString processName);
+    Q_INVOKABLE void allRemoveProcess();
+    Q_INVOKABLE bool processPlayingStatus();
     Q_INVOKABLE QList<double> getProcessDataList(QString processName);
 
     double getMemoryTotalUsage() const;
@@ -69,6 +65,7 @@ private:
     double processMemoryUsage;
     QVector<ProcessInfo> processList;
     QTimer *processTimer;
+    QVector<QString> checkProcess;
     QMap<QString, QList<double>> memoryMap;
 };
 

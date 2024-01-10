@@ -17,6 +17,12 @@ Window {
     Colors { id: colors }
     Images { id: images }
 
+    readonly property int playingStatus: 0
+    readonly property int pausingStatus: 1
+    readonly property int stoppingStatus: 2
+
+    property int chartStatus: stoppingStatus
+
     property int chartStartTime: 0
     property var charts: []
     property var usageProcessList: []
@@ -32,7 +38,7 @@ Window {
     }
 
     Component.onCompleted: {
-        timer.stop()
+        chartTimer.stop()
     }
 
     Image {
@@ -84,7 +90,7 @@ Window {
             height: parent.height
             text: "Memory"
             font.pointSize: 20
-            color: "black"
+            color: colors.mainColor
             horizontalAlignment: Text.AlignHCenter
         }
 
@@ -137,23 +143,53 @@ Window {
             Row {
                 anchors.top: parent.top
                 anchors.right: parent.right
-                anchors.topMargin: 30
-                anchors.rightMargin: 30
+                anchors.topMargin: 70
+                anchors.rightMargin: 40
+                spacing: 5
 
-                Button {
-                    width: 40
-                    height: 30
-                    text: "Test"
+                ImageButton {
+                    width: 20
+                    height: 20
+                    source: (chartStatus === pausingStatus && memoryModel.processPlayingStatus() === true) ? images.playingEnable : images.playingDisable
 
-                    onClicked: {
-                        addChartSeries()
+                    onImageClick: {
+                        if(chartStatus === pausingStatus && memoryModel.processPlayingStatus() === true) {
+                            chartStatus = playingStatus
+
+                            chartTimer.start()
+                        }
                     }
                 }
 
-                Button {
-                    width: 40
-                    height: 30
-                    text: "Test2"
+                ImageButton {
+                    width: 20
+                    height: 20
+                    source: (chartStatus === playingStatus && memoryModel.processPlayingStatus() === true) ? images.pausingEnable : images.pausingDisable
+
+                    onImageClick: {
+                        if(chartStatus === playingStatus && memoryModel.processPlayingStatus() === true) {
+                            chartStatus = pausingStatus
+
+                            chartTimer.stop()
+                        }
+                    }
+                }
+
+                ImageButton {
+                    width: 20
+                    height: 20
+                    source: (chartStatus !== stoppingStatus) ? images.stoppingEnable : images.stoppingDisable
+
+                    onImageClick: {
+                        if(chartStatus !== stoppingStatus) {
+                            chartStatus = stoppingStatus
+
+                            removeChartSeries()
+                            chartTimer.stop()
+                            memoryModel.allRemoveProcess()
+                            timerCount = 0
+                        }
+                    }
                 }
             }
 
@@ -167,7 +203,7 @@ Window {
         }
 
     Timer {
-        id: timer
+        id: chartTimer
         interval: 1000
         running: true
         repeat: true
@@ -341,7 +377,8 @@ Window {
                         memoryModel.addProcess(process.toString())
                         addChartSeries(process.toString())
                         usageProcessList.push(process.toString())
-                        timer.start()
+                        chartTimer.start()
+                        chartStatus = playingStatus
                     }
                 }
             }
@@ -352,6 +389,10 @@ Window {
         let line = chart.createSeries(ChartView.SeriesTypeLine, processName, axisX, axisY);
 
         charts.push(line)
+    }
+
+    function removeChartSeries() {
+        chart.removeAllSeries()
     }
 
     function searchProcessName(keyword) {

@@ -3,11 +3,21 @@
         <file>src/qml/main.qml</file>
         <file>src/qml/Components/CircularProgressBar.qml</file>
         <file>src/qml/Components/PretendardText.qml</file>
+        <file>src/qml/Components/ImageButton.qml</file>
         <file>src/qml/Consts/Colors.qml</file>
         <file>src/qml/Consts/Images.qml</file>
         <file>src/qml/Consts/Fonts.qml</file>
         <file>images/bg_white_rectangle.png</file>
         <file>images/search_bar.png</file>
+        <file>images/playing_enable.png</file>
+        <file>images/playing_disable.png</file>
+        <file>images/playing_indicator.png</file>
+        <file>images/pausing_enable.png</file>
+        <file>images/pausing_disable.png</file>
+        <file>images/pausing_indicator.png</file>
+        <file>images/stopping_enable.png</file>
+        <file>images/stopping_disable.png</file>
+        <file>images/stopping_indicator.png</file>
         <file>fonts/PretendardVariable.ttf</file>
     </qresource>
 </RCC>

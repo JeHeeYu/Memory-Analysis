@@ -8,8 +8,8 @@ MemoryModel::MemoryModel(QObject *parent) : QObject(parent)
     processTimer = new QTimer(this);
     connectInit();
 
-    QTimer::singleShot(1000, this, &MemoryModel::getProcessData);
-    processTimer->start(2000);
+    QTimer::singleShot(500, this, &MemoryModel::getProcessData);
+    processTimer->start(1000);
 }
 
 MemoryModel::~MemoryModel()
@@ -28,8 +28,8 @@ void MemoryModel::timerTimeout()
     setMemoryTotalUsage(processManager->getMemoryTotalUsage());
     setCPUTotalUsage(processManager->getCPUTotalUsage());
 
-    for (int i = 0; i < processList.last().checkProcess.length(); i++) {
-        memoryMap[processList.last().checkProcess[i]].append(processManager->getMemoryUsageByProcessName(processList.last().checkProcess[i].toStdWString().c_str()));
+    for (int i = 0; i < checkProcess.length(); i++) {
+        memoryMap[checkProcess[i]].append(processManager->getMemoryUsageByProcessName(checkProcess[i].toStdWString().c_str()));
     }
 }
 
@@ -58,7 +58,17 @@ void MemoryModel::getProcessData()
 
 void MemoryModel::addProcess(QString processName)
 {
-    processList.last().checkProcess.push_back(processName);
+    checkProcess.push_back(processName);
+}
+
+void MemoryModel::allRemoveProcess()
+{
+    checkProcess.clear();
+}
+
+bool MemoryModel::processPlayingStatus()
+{
+    return checkProcess.length() == 0 ? false : true;
 }
 
 QList<double> MemoryModel::getProcessDataList(QString processName)
