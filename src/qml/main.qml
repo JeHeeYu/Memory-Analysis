@@ -28,6 +28,7 @@ Window {
 
     property int chartStartTime: 0
     property var charts: []
+    property var scatters: []
     property var usageProcessList: []
     property var processList: memoryModel.processList
     property double memoryTotalUsage: memoryModel.memoryTotalUsage
@@ -116,123 +117,123 @@ Window {
     }
 
     ChartView {
-            id: chart
-            title: "Real-time Chart"
-            antialiasing: true
-            width: 950
-            height: 400
-            anchors.bottom: parent.bottom
+        id: chart
+        title: "Real-time Chart"
+        antialiasing: true
+        width: 950
+        height: 400
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+        anchors.bottomMargin: 25
+        anchors.rightMargin: 30
+
+        ValuesAxis {
+            id: axisX
+            min: 1
+            max: 7
+            tickCount: 7
+            labelFormat: "%.0f"
+        }
+
+        ValuesAxis {
+            id: axisY
+            min: 0
+            max: 100
+            tickCount: 6
+            labelFormat: "%.0f"
+        }
+
+        Row {
+            anchors.top: parent.top
             anchors.right: parent.right
-            anchors.bottomMargin: 25
-            anchors.rightMargin: 30
+            anchors.topMargin: 20
+            anchors.rightMargin: 20
+            spacing: 5
 
-            ValuesAxis {
-                id: axisX
-                min: 1
-                max: 7
-                tickCount: 7
-                labelFormat: "%.0f"
+            Image {
+                width: 20
+                height: 20
+                source: (chartStatus === playingStatus) ? images.playingIndicator : images.disableIndicator
             }
 
-            ValuesAxis {
-                id: axisY
-                min: 0
-                max: 100
-                tickCount: 6
-                labelFormat: "%.0f"
+            Image {
+                width: 20
+                height: 20
+                source: (chartStatus === pausingStatus) ? images.pausingIndicator : images.disableIndicator
             }
 
-            Row {
-                anchors.top: parent.top
-                anchors.right: parent.right
-                anchors.topMargin: 20
-                anchors.rightMargin: 20
-                spacing: 5
-
-                Image {
-                    width: 20
-                    height: 20
-                    source: (chartStatus === playingStatus) ? images.playingIndicator : images.disableIndicator
-                }
-
-                Image {
-                    width: 20
-                    height: 20
-                    source: (chartStatus === pausingStatus) ? images.pausingIndicator : images.disableIndicator
-                }
-
-                Image {
-                    width: 20
-                    height: 20
-                    source: (chartStatus === stoppingStatus) ? images.stoppingIndicator : images.disableIndicator
-                }
-            }
-
-            Row {
-                anchors.top: parent.top
-                anchors.right: parent.right
-                anchors.topMargin: 70
-                anchors.rightMargin: 40
-                spacing: 5
-
-                ImageButton {
-                    width: 20
-                    height: 20
-                    source: (chartStatus === pausingStatus && memoryModel.processPlayingStatus() === true) ? images.playingEnable : images.playingDisable
-
-                    onImageClick: {
-                        if(chartStatus === pausingStatus && memoryModel.processPlayingStatus() === true) {
-                            chartStatus = playingStatus
-
-                            chartTimer.start()
-                        }
-                    }
-                }
-
-                ImageButton {
-                    width: 20
-                    height: 20
-                    source: (chartStatus === playingStatus && memoryModel.processPlayingStatus() === true) ? images.pausingEnable : images.pausingDisable
-
-                    onImageClick: {
-                        if(chartStatus === playingStatus && memoryModel.processPlayingStatus() === true) {
-                            chartStatus = pausingStatus
-
-                            chartTimer.stop()
-                        }
-                    }
-                }
-
-                ImageButton {
-                    width: 20
-                    height: 20
-                    source: (chartStatus !== stoppingStatus) ? images.stoppingEnable : images.stoppingDisable
-
-                    onImageClick: {
-                        if(chartStatus !== stoppingStatus) {
-                            chartStatus = stoppingStatus
-
-                            removeChartSeries()
-                            chartTimer.stop()
-                            memoryModel.allRemoveProcess()
-                            usageProcessList = []
-                            chartStartTime = 0
-
-                            axisX.max = defaultaxisXMax
-                            axisY.max = defaultaxisYMax
-                        }
-                    }
-                }
-            }
-
-            PretendardText {
-                text: "(s)"
-                anchors.bottom: parent.bottom
-                anchors.right: parent.right
-                anchors.bottomMargin: 32
-                anchors.rightMargin: 15
+            Image {
+                width: 20
+                height: 20
+                source: (chartStatus === stoppingStatus) ? images.stoppingIndicator : images.disableIndicator
             }
         }
+
+        Row {
+            anchors.top: parent.top
+            anchors.right: parent.right
+            anchors.topMargin: 70
+            anchors.rightMargin: 40
+            spacing: 5
+
+            ImageButton {
+                width: 20
+                height: 20
+                source: (chartStatus === pausingStatus && memoryModel.processPlayingStatus() === true) ? images.playingEnable : images.playingDisable
+
+                onImageClick: {
+                    if(chartStatus === pausingStatus && memoryModel.processPlayingStatus() === true) {
+                        chartStatus = playingStatus
+
+                        chartTimer.start()
+                    }
+                }
+            }
+
+            ImageButton {
+                width: 20
+                height: 20
+                source: (chartStatus === playingStatus && memoryModel.processPlayingStatus() === true) ? images.pausingEnable : images.pausingDisable
+
+                onImageClick: {
+                    if(chartStatus === playingStatus && memoryModel.processPlayingStatus() === true) {
+                        chartStatus = pausingStatus
+
+                        chartTimer.stop()
+                    }
+                }
+            }
+
+            ImageButton {
+                width: 20
+                height: 20
+                source: (chartStatus !== stoppingStatus) ? images.stoppingEnable : images.stoppingDisable
+
+                onImageClick: {
+                    if(chartStatus !== stoppingStatus) {
+                        chartStatus = stoppingStatus
+
+                        removeChartSeries()
+                        chartTimer.stop()
+                        memoryModel.allRemoveProcess()
+                        usageProcessList = []
+                        chartStartTime = 0
+
+                        axisX.max = defaultaxisXMax
+                        axisY.max = defaultaxisYMax
+                    }
+                }
+            }
+        }
+
+        PretendardText {
+            text: "(s)"
+            anchors.bottom: parent.bottom
+            anchors.right: parent.right
+            anchors.bottomMargin: 32
+            anchors.rightMargin: 15
+        }
+    }
 
     Timer {
         id: chartTimer
@@ -245,8 +246,6 @@ Window {
                 axisX.max = chartStartTime
             }
 
-            chartStartTime++
-
             for(let i = 0; i < charts.length; i++) {
                 let usage = memoryModel.getProcessDataList(usageProcessList[i])
 
@@ -255,7 +254,10 @@ Window {
                 }
 
                 charts[i].append(chartStartTime, usage[usage.length - 1])
+                scatters[i].append(chartStartTime, usage[usage.length - 1])
             }
+
+            chartStartTime++
         }
     }
 
@@ -419,13 +421,17 @@ Window {
 
     function addChartSeries(processName) {
         let line = chart.createSeries(ChartView.SeriesTypeLine, processName, axisX, axisY);
-
         charts.push(line)
+
+        let scatter = chart.createSeries(ChartView.SeriesTypeScatter, processName, axisX, axisY);
+        scatter.markerSize = 10
+        scatters.push(scatter)
     }
 
     function removeChartSeries() {
         chart.removeAllSeries()
-        charts = [];
+        charts = []
+        scatters = []
     }
 
     function searchProcessName(keyword) {
