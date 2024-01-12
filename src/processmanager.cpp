@@ -94,7 +94,7 @@ DWORD ProcessManager::getProcessIdByName(const wchar_t* processName)
 
 double ProcessManager::getMemoryUsageByProcessName(const wchar_t* processName)
 {
-    qDebug() << Q_FUNC_INFO << processName;
+//    qDebug() << Q_FUNC_INFO << processName;
 
     double memoryUsageMB = 0.0;
     DWORD processId = getProcessIdByName(processName);

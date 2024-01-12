@@ -14,6 +14,8 @@ Item {
     property string pausingIndicator: "../../../images/pausing_indicator.png"
     property string stoppingEnable: "../../../images/stopping_enable.png"
     property string stoppingDisable: "../../../images/stopping_disable.png"
+    property string settingEnable: "../../../images/setting_enable.png"
+    property string settingDisable: "../../../images/setting_disable.png"
     property string stoppingIndicator: "../../../images/stopping_indicator.png"
     property string disableIndicator: "../../../images/disable_indicator.png"
 }

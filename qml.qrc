@@ -4,9 +4,12 @@
         <file>src/qml/Components/CircularProgressBar.qml</file>
         <file>src/qml/Components/PretendardText.qml</file>
         <file>src/qml/Components/ImageButton.qml</file>
+        <file>src/qml/Components/CustomButton.qml</file>
         <file>src/qml/Consts/Colors.qml</file>
         <file>src/qml/Consts/Images.qml</file>
         <file>src/qml/Consts/Fonts.qml</file>
+        <file>src/qml/Consts/Strings.qml</file>
+        <file>src/qml/Chart/SettingPopup.qml</file>
         <file>images/bg_white_rectangle.png</file>
         <file>images/search_bar.png</file>
         <file>images/playing_enable.png</file>
@@ -19,6 +22,8 @@
         <file>images/stopping_disable.png</file>
         <file>images/stopping_indicator.png</file>
         <file>images/disable_indicator.png</file>
+        <file>images/setting_enable.png</file>
+        <file>images/setting_disable.png</file>
         <file>fonts/PretendardVariable.ttf</file>
     </qresource>
 </RCC>

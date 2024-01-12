@@ -7,6 +7,8 @@ import QtQuick.Layouts
 import "./Components"
 import "./Consts"
 
+import "./Chart"
+
 Window {
     width: Screen.width - 500
     height: Screen.height - 300
@@ -17,7 +19,9 @@ Window {
     Colors { id: colors }
     Images { id: images }
 
+    readonly property int defaultaxisXMin: 0
     readonly property int defaultaxisXMax: 7
+    readonly property int defaultaxisYMin: 0
     readonly property int defaultaxisYMax: 100
 
     readonly property int playingStatus: 0
@@ -33,6 +37,11 @@ Window {
     property var processList: memoryModel.processList
     property double memoryTotalUsage: memoryModel.memoryTotalUsage
     property double cpuTotalUsage: memoryModel.cpuTotalUsage
+
+    property int axisXMin: 0
+    property int axisXMax: 7
+    property int axisYMin: 0
+    property int axisYMax: 100
 
     onProcessListChanged: {
         for(let i = 0; i < processList.length; i++) {
@@ -129,16 +138,16 @@ Window {
 
         ValuesAxis {
             id: axisX
-            min: 1
-            max: 7
+            min: axisXMin
+            max: axisXMax
             tickCount: 7
             labelFormat: "%.0f"
         }
 
         ValuesAxis {
             id: axisY
-            min: 0
-            max: 100
+            min: axisYMin
+            max: axisYMax
             tickCount: 6
             labelFormat: "%.0f"
         }
@@ -219,8 +228,20 @@ Window {
                         usageProcessList = []
                         chartStartTime = 0
 
-                        axisX.max = defaultaxisXMax
-                        axisY.max = defaultaxisYMax
+                        axisXMax = defaultaxisXMax
+                        axisYMax = defaultaxisYMax
+                    }
+                }
+            }
+
+            ImageButton {
+                width: 20
+                height: 20
+                source: (chartStatus !== playingStatus) ? images.settingEnable : images.settingDisable
+
+                onImageClick: {
+                    if(chartStatus !== playingStatus) {
+                        popup.open()
                     }
                 }
             }
@@ -242,15 +263,15 @@ Window {
         repeat: true
 
         onTriggered: {
-            if (axisX.max < chartStartTime) {
-                axisX.max = chartStartTime
+            if (axisXMax < chartStartTime) {
+                axisXMax = chartStartTime
             }
 
             for(let i = 0; i < charts.length; i++) {
                 let usage = memoryModel.getProcessDataList(usageProcessList[i])
 
-                if(axisY.max < usage[usage.length - 1]) {
-                    axisY.max = usage[usage.length - 1] + 50
+                if(axisYMax < usage[usage.length - 1]) {
+                    axisYMax = usage[usage.length - 1] + 50
                 }
 
                 charts[i].append(chartStartTime, usage[usage.length - 1])
@@ -416,6 +437,36 @@ Window {
                     }
                 }
             }
+        }
+    }
+
+    SettingPopup {
+        id: popup
+
+        onOkButtonClicked: (startTime, endTime, minRange, maxRange) =>  {
+                               if(startTime !== -1) {
+                                   axisXMin = startTime
+                               }
+
+                               if(endTime !== -1) {
+                                   axisXMax = endTime
+                               }
+
+                               if(minRange !== -1) {
+                                   axisYMin = minRange
+                               }
+
+                               if(maxRange !== -1) {
+                                   axisYMax = maxRange
+                               }
+
+                               if(startTime !== -1 && endTime !== -1 && minRange !== -1 && maxRange !== 1) {
+                                   popup.close()
+                               }
+                           }
+
+        onCloseButtonClicked: {
+            popup.close()
         }
     }
 
